@@ -1,0 +1,14 @@
+<html>
+	<head>
+	</head>
+	<body>
+		<form action="/signup" method="post">
+		<input type="hidden" id="code" name="code" value="<%= params[:code] %>">
+		First name:<br>
+		<input type="text" name="first_name"><br>
+		Phone Number:<br>
+		<input type="text" name="number">
+	  <input type="submit" value="Submit">
+		</form>
+	</body>
+</html>
