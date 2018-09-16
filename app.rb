@@ -70,7 +70,41 @@ end
 
 #modify incoming/sms page
 get '/incoming/sms' do
-	404
+	session["counter"] ||= 1
+	body = params[:Body] || ""
+
+	if session["counter"] == 1
+		message = "Hey, it's great to hear your first message!"
+		media = "https://media.giphy.com/media/dzaUX7CAG0Ihi/giphy.gif" 
+	else
+		message = "Thanks for messaging me!"
+		media = nil
+	end
+	
+	# Build a twilio response object 
+	twiml = Twilio::TwiML::MessagingResponse.new do |r|
+		r.message do |m|
+
+		# add the text of the response
+    	m.body( "You said: " + body + "\n It's message number #{ session["counter"]}" )
+			
+		# add media if it is defined
+    	unless media.nil?
+    		m.media( media )
+    	end
+    end
+
+    session["counter"] += 1
+    content_type 'text/xml'
+    twiml.to_s
+end
+	
+	# increment the session counter
+  session["counter"] += 1
+	
+	# send a response to twilio 
+  content_type 'text/xml'
+  twiml.to_s
 end
 
 #modify test/conversation page
