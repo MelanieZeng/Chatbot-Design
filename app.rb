@@ -27,10 +27,18 @@ get '/signup' do
 end
 
 post '/signup' do
+	#code to check parameters
+	client = Twilio::REST::Client.new ENV["TWILIO_ACCOUNT_SID"], ENV["TWILIO_AUTH_TOKEN"]
 	if params[:code] == secret_code
 		if params[:first_name] == '' or params[:number] == ''
 			'Please sign up with your first name and number.'
 		else
+			# this will send a message from any end point
+			client.api.account.messages.create(
+				from: ENV["TWILIO_FROM"],
+				to: params[:number],
+				body: "message"
+				)
 			session[:first_name] = params[:first_name]
 			session[:number] = params[:number]
 			greetings.sample + ' ' + params[:first_name] + '. You will receive a confirmation message from me in a few minutes.'
