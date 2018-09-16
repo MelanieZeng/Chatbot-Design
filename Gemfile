@@ -6,3 +6,5 @@ gem 'sinatra-contrib'
 gem 'dotenv-rails', :groups => [:development, :test]
 
 gem 'twilio-ruby', ">5.0.0"
+
+ruby '2.4.4'
