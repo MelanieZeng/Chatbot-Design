@@ -4,6 +4,7 @@
 /coverage/
 /InstalledFiles
 /pkg/
+.env
 /spec/reports/
 /spec/examples.txt
 /test/tmp/
