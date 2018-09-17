@@ -52,7 +52,7 @@ get '/about' do
 	session["visits"] = session["visits"] + 1 
 	time = Time.now
 	if session[:first_name].nil?
-		'Is picking the food choice just another unsolved problem in your day? "Eatappy" is the food guide for you! Simply play a fun game by answering a few questions and I will tell you what kind of food you should get today. Eating is happy. Enjoy it! <br />Total visits on our website: ' + session["visits"].to_s
+		'Is picking food an unsolved problem in your day? "Eatappy" is the food guide for you! Simply play a fun game by answering a few questions and I will tell you what kind of food you should get today. Eating is happy. Enjoy it! <br />Total visits on our website: ' + session["visits"].to_s
     else 
     	if session["visits"] > 10 #make a user a VIP after they visit the website more than 10 times
     		session[:first_name] + ', You are a VIP now!' + '<br /> You have visited ' + session["visits"].to_s + ' times as of ' + time.strftime("%A %B %d, %Y %H:%M")
@@ -72,13 +72,25 @@ end
 get '/incoming/sms' do
 	session["counter"] ||= 1
 	body = params[:Body] || ""
+	time = Time.now
 
 	if session["counter"] == 1
-		message = "Hey, it's great to hear your first message!"
+		message = "Hey, it's great to hear your first message! My name is "Eatappy". If picking food is an unsolved problem for your daily life, I am here to help you! 😋 Would you like to pick your food today? Reply yes or yeah to get started."
 		media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif" 
-	else
-		message = "Thanks for messaging me!"
-		media = nil
+	elsif session["counter"] == 10 #make a user a VIP after they visit the website more than 9 times
+		message = session[:first_name] + ', You are a VIP now!' + '<br /> You have talked to me ' + session["counter"].to_s + ' times as of ' + time.strftime("%A %B %d, %Y %H:%M")
+		media = 'https://media3.giphy.com/media/kmFNdsZfgMo7e/giphy.gif'
+    else #show different greetings based on the time during a day
+		if time.hour >= 5 and time.hour <= 14
+			greetings_mn.sample + ', ' + session[:first_name] + 'Would you like to pick your food today?'
+			determine_response body
+		elsif time.hour > 14 and time.hour <= 18
+			greetings_an.sample + ', ' + session[:first_name] + 'Would you like to pick your food today?'
+			determine_response body
+		else
+			greetings_en.sample + ', ' + session[:first_name] + 'Would you like to pick your food today?'
+			determine_response body
+		end
 	end
 	
 	# Build a twilio response object 
@@ -94,17 +106,12 @@ get '/incoming/sms' do
     	end
     end
 
+    # increment the session counter
     session["counter"] += 1
+
+    # send a response to twilio 
     content_type 'text/xml'
     twiml.to_s
-end
-	
-	# increment the session counter
-  session["counter"] += 1
-	
-	# send a response to twilio 
-  content_type 'text/xml'
-  twiml.to_s
 end
 
 #modify test/conversation page
