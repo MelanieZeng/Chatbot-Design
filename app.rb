@@ -73,10 +73,10 @@ get '/incoming/sms' do
 	session["counter"] ||= 1
 
 	body = params[:Body] || ""
-	#session[:first_name] = params[:first_name]
+	firstname = params[:First_name]
 
 	if session["counter"] == 1
-		message = "Hey, it's great to hear your first message! I am Eatappy. If picking food is an unsolved problem for your daily life, I am here to help you! 😋 Would you like to pick your food today? Reply yes or yeah to get started. "
+		message = "Hey "+ firstname + ", it's great to hear your first message! I am Eatappy. If picking food is an unsolved problem for your daily life, I am here to help you! 😋 Would you like to pick your food today? Reply yes or yeah to get started. "
 		media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif" 
     else
     	message = determine_response body
@@ -153,7 +153,7 @@ def determine_response body
 	elsif body == 'joke'
 		file = File.open("jokes.txt", "r")
 		array_of_lines = IO.readlines("jokes.txt")
-		return array_of_lines.sample + '<br /><br />Tell me if you like the joke by putting "jokewasgood" as an input for body. If not, put "jokewasbad" and I will try harder!'
+		return array_of_lines.sample + "\n Tell me if you like the joke by putting "jokewasgood" as an input for body. If not, put "jokewasbad" and I will try harder!"
 	elsif body == 'jokewasgood'
 		'Thank you for the complement. I am glad that you like it!'
 	elsif body == 'jokewasbad'
