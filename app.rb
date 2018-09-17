@@ -33,15 +33,15 @@ post '/signup' do
 		if params[:first_name] == '' or params[:number] == ''
 			'Please sign up with your first name and number.'
 		else
+			session[:first_name] = params[:first_name]
+			session[:number] = params[:number]
 			# this will send a message from any end point
 			client.api.account.messages.create(
 				from: ENV["TWILIO_FROM"],
 				to: params[:number],
-				body: "message"
+				body: 'Hi ' + session[:first_name] + ', you are all set!'
 				)
-			session[:first_name] = params[:first_name]
-			session[:number] = params[:number]
-			greetings.sample + ' ' + params[:first_name] + '. You will receive a confirmation message from me in a few minutes.'
+			greetings.sample + ' ' + session[:first_name] + '. You will receive a confirmation message from me in a few minutes.'
 		end
 	end
 end
@@ -71,42 +71,29 @@ end
 #modify incoming/sms page
 get '/incoming/sms' do
 	session["counter"] ||= 1
-	body = params[:Body] || ""
-	time = Time.now
+	body = params[:body] || ""
+	#session[:first_name] = params[:first_name]
 
 	if session["counter"] == 1
 		message = "Hey, it's great to hear your first message! I am Eatappy. If picking food is an unsolved problem for your daily life, I am here to help you! 😋 Would you like to pick your food today? Reply yes or yeah to get started. "
 		media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif" 
-	elsif session["counter"] == 10 #make a user a VIP after they visit the website more than 9 times
-		message = session[:first_name] + ', You are a VIP now!' + '<br /> You have talked to me ' + session["counter"].to_s + ' times as of ' + time.strftime("%A %B %d, %Y %H:%M")
-		media = 'https://media3.giphy.com/media/kmFNdsZfgMo7e/giphy.gif'
     else
-    	#show different greetings based on the time during a day
-		if time.hour >= 5 and time.hour <= 14
-			message = greetings_mn.sample + ', ' + session[:first_name] + ' Would you like to pick your food today? '
-		#	determine_response body
-		elsif time.hour > 14 and time.hour <= 18
-			message = greetings_an.sample + ', ' + session[:first_name] + ' Would you like to pick your food today? '
-		#	determine_response body
-		else
-			message = greetings_en.sample + ', ' + session[:first_name] + ' Would you like to pick your food today? '
-		#	determine_response body
-		end
-	end
+    	message = determine_response body
+    end
 	
 	# Build a twilio response object 
 	twiml = Twilio::TwiML::MessagingResponse.new do |r|
 		r.message do |m|
 
 		# add the text of the response
-    	m.body ( message + "You said: " + body + "\n It's message number " + session["counter"].to_s )
-			
-		# add media if it is defined
-    	unless media.nil?
-    		m.media( media )
-    	end
+	    	m.body ( message + "You said: " + body + "\n It's message number " + session["counter"].to_s )
+				
+			# add media if it is defined
+	    	unless media.nil?
+	    		m.media( media )
+	    	end
+	    end
     end
-end
 
     # increment the session counter
     session["counter"] += 1
@@ -121,7 +108,7 @@ get '/test/conversation' do
 	body = params[:body]
 	from = params[:from]
 	if body.nil? or from.nil?
-		puts 'Input for body and from are missing. Please give an input for body and from in the URL such as follows <br />localhost:4567/test/conversation?Body=Hi&From=1234567789'
+		puts 'Input for body and from are missing. Please give an input for body and from in the URL such as follows <br />localhost:4567/test/conversation?body=Hi&From=1234567789'
 		return
 	else
 		determine_response body
@@ -142,17 +129,18 @@ end
 
 def determine_response body
 	body = body.downcase.strip
-	hi_vocabs = ["hi", "hello", "hey"]
-	what_vocabs = ["what", "help", "feature", "function", "guide", "do"]
-	who_vocabs = ["who", "you"]
-	where_vocabs = ["where", "location", "city"]
-	when_vocabs = ["when", "created", "born", "made"]
-	why_vocabs = ["why", "purpose", "for", "meaning"]
+	hi_vocabs = ["hi", "hello", "hey", "Hi", "Hello", "Hey"]
+	what_vocabs = ["what", "help", "feature", "function", "guide", "What", "Help", "Feature", "Function", "Guide"]
+	who_vocabs = ["who", "Who"]
+	where_vocabs = ["where", "location", "city", "Where", "Location", "City"]
+	when_vocabs = ["when", "created", "born", "made", "When", "Created", "Born", "Made"]
+	why_vocabs = ["why", "purpose", "for", "meaning", "Why", "Purpose", "For", "Meaning"]
+	yes_vocabs = ['Yes', 'Yeah', 'Yup', 'Sure', 'Sounds good', 'Ok', "yes", "yeah", "yup", "sure", "sounds good", "ok"]
 
 	if body == 'hi' or has_vocab_in_sentence body, hi_vocabs
-		'Hi I am "Eatappy". I am the food guide for you!'
+		'Hi, I am "Eatappy". I am the food guide for you!'
 	elsif body == 'who' or has_vocab_in_sentence body, who_vocabs
-		'I am a MeBot. Want to know more about me? Try putting "fact" as an input for body!'
+		'I am a MeBot of Melanie Zeng. Want to know more about me? Try putting "fact" as an input for body!'
 	elsif body == 'what' or has_vocab_in_sentence body, what_vocabs
 		'Simply play a fun game with me by answering a few questions and I will help you to pick your food today!'
 	elsif body == 'where' or has_vocab_in_sentence body, where_vocabs
@@ -173,6 +161,8 @@ def determine_response body
 		file = File.open("facts.txt", "r")
 		array_of_facts = IO.readlines("facts.txt")
 		return array_of_facts.sample
+	elsif has_vocab_in_sentence body, yes_vocabs
+		'Send me a selfie and let me see how you look now!'
 	else
 		"Oops! I didn't get that. Please put one of the follows as input for body: hi, who, what, where, when, why, joke, help and fact."
 	end
