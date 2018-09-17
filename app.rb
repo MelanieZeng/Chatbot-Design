@@ -82,13 +82,13 @@ get '/incoming/sms' do
 		media = 'https://media3.giphy.com/media/kmFNdsZfgMo7e/giphy.gif'
     else #show different greetings based on the time during a day
 		if time.hour >= 5 and time.hour <= 14
-			greetings_mn.sample + ', ' + session[:first_name] + 'Would you like to pick your food today?'
+			message = greetings_mn.sample + ', ' + session[:first_name] + 'Would you like to pick your food today?'
 			determine_response body
 		elsif time.hour > 14 and time.hour <= 18
-			greetings_an.sample + ', ' + session[:first_name] + 'Would you like to pick your food today?'
+			message = greetings_an.sample + ', ' + session[:first_name] + 'Would you like to pick your food today?'
 			determine_response body
 		else
-			greetings_en.sample + ', ' + session[:first_name] + 'Would you like to pick your food today?'
+			message = greetings_en.sample + ', ' + session[:first_name] + 'Would you like to pick your food today?'
 			determine_response body
 		end
 	end
