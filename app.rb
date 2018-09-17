@@ -75,7 +75,7 @@ get '/incoming/sms' do
 
 	if session["counter"] == 1
 		message = "Hey, it's great to hear your first message!"
-		media = "https://media.giphy.com/media/dzaUX7CAG0Ihi/giphy.gif" 
+		media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif" 
 	else
 		message = "Thanks for messaging me!"
 		media = nil
@@ -86,7 +86,7 @@ get '/incoming/sms' do
 		r.message do |m|
 
 		# add the text of the response
-    	m.body( "You said: " + body + "\n It's message number #{ session["counter"]}" )
+    	m.body "You said: " + body + "\n It's message number " + session["counter"]
 			
 		# add media if it is defined
     	unless media.nil?
