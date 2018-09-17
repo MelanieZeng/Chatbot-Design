@@ -86,7 +86,7 @@ get '/incoming/sms' do
 		r.message do |m|
 
 		# add the text of the response
-    	m.body "You said: " + body + "\n It's message number " + session["counter"]
+    	m.body "You said: " + body + "\n It's message number " + session["counter"].to_s
 			
 		# add media if it is defined
     	unless media.nil?
