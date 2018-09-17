@@ -80,8 +80,9 @@ get '/incoming/sms' do
 	elsif session["counter"] == 10 #make a user a VIP after they visit the website more than 9 times
 		message = session[:first_name] + ', You are a VIP now!' + '<br /> You have talked to me ' + session["counter"].to_s + ' times as of ' + time.strftime("%A %B %d, %Y %H:%M")
 		media = 'https://media3.giphy.com/media/kmFNdsZfgMo7e/giphy.gif'
-    else #show different greetings based on the time during a day
+    else
     	message = 'Would you like to pick your food today?'
+    	#show different greetings based on the time during a day
 		#if time.hour >= 5 and time.hour <= 14
 		#	message = greetings_mn.sample + ', ' + session[:first_name] + 'Would you like to pick your food today?'
 		#	determine_response body
@@ -99,7 +100,7 @@ get '/incoming/sms' do
 		r.message do |m|
 
 		# add the text of the response
-    	m.body "You said: " + body + "\n It's message number " + session["counter"].to_s
+    	m.body message + "You said: " + body + "\n It's message number " + session["counter"].to_s
 			
 		# add media if it is defined
     	unless media.nil?
