@@ -75,22 +75,21 @@ get '/incoming/sms' do
 	time = Time.now
 
 	if session["counter"] == 1
-		message = "Hey, it's great to hear your first message! I am Eatappy. If picking food is an unsolved problem for your daily life, I am here to help you! 😋 Would you like to pick your food today? Reply yes or yeah to get started."
+		message = "Hey, it's great to hear your first message! I am Eatappy. If picking food is an unsolved problem for your daily life, I am here to help you! 😋 Would you like to pick your food today? Reply yes or yeah to get started. "
 		media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif" 
 	elsif session["counter"] == 10 #make a user a VIP after they visit the website more than 9 times
 		message = session[:first_name] + ', You are a VIP now!' + '<br /> You have talked to me ' + session["counter"].to_s + ' times as of ' + time.strftime("%A %B %d, %Y %H:%M")
 		media = 'https://media3.giphy.com/media/kmFNdsZfgMo7e/giphy.gif'
     else
-    	message = 'Would you like to pick your food today?'
     	#show different greetings based on the time during a day
-		#if time.hour >= 5 and time.hour <= 14
-		#	message = greetings_mn.sample + ', ' + session[:first_name] + 'Would you like to pick your food today?'
+		if time.hour >= 5 and time.hour <= 14
+			message = greetings_mn.sample + ', ' + session[:first_name] + ' Would you like to pick your food today? '
 		#	determine_response body
-		#elsif time.hour > 14 and time.hour <= 18
-		#	message = greetings_an.sample + ', ' + session[:first_name] + 'Would you like to pick your food today?'
+		elsif time.hour > 14 and time.hour <= 18
+			message = greetings_an.sample + ', ' + session[:first_name] + ' Would you like to pick your food today? '
 		#	determine_response body
-		#else
-		#	message = greetings_en.sample + ', ' + session[:first_name] + 'Would you like to pick your food today?'
+		else
+			message = greetings_en.sample + ', ' + session[:first_name] + ' Would you like to pick your food today? '
 		#	determine_response body
 		end
 	end
@@ -100,13 +99,14 @@ get '/incoming/sms' do
 		r.message do |m|
 
 		# add the text of the response
-    	m.body message + "You said: " + body + "\n It's message number " + session["counter"].to_s
+    	m.body ( message + "You said: " + body + "\n It's message number " + session["counter"].to_s )
 			
 		# add media if it is defined
     	unless media.nil?
     		m.media( media )
     	end
     end
+end
 
     # increment the session counter
     session["counter"] += 1
