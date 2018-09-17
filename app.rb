@@ -73,10 +73,9 @@ get '/incoming/sms' do
 	session["counter"] ||= 1
 
 	body = params[:Body] || ""
-	firstname = params[:First_name]
 
 	if session["counter"] == 1
-		message = "Hey "+ firstname + ", it's great to hear your first message! I am Eatappy. If picking food is an unsolved problem for your daily life, I am here to help you! 😋 Would you like to pick your food today? Reply yes or yeah to get started. "
+		message = "Hey, it's great to hear your first message! I am Eatappy. If picking food is an unsolved problem for your daily life, I am here to help you! 😋 Would you like to pick your food today? Reply yes or yeah to get started. "
 		media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif" 
     else
     	message = determine_response body
