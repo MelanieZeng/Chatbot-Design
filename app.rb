@@ -75,21 +75,22 @@ get '/incoming/sms' do
 	time = Time.now
 
 	if session["counter"] == 1
-		message = "Hey, it's great to hear your first message! My name is "Eatappy". If picking food is an unsolved problem for your daily life, I am here to help you! 😋 Would you like to pick your food today? Reply yes or yeah to get started."
+		message = "Hey, it's great to hear your first message! I am Eatappy. If picking food is an unsolved problem for your daily life, I am here to help you! 😋 Would you like to pick your food today? Reply yes or yeah to get started."
 		media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif" 
 	elsif session["counter"] == 10 #make a user a VIP after they visit the website more than 9 times
 		message = session[:first_name] + ', You are a VIP now!' + '<br /> You have talked to me ' + session["counter"].to_s + ' times as of ' + time.strftime("%A %B %d, %Y %H:%M")
 		media = 'https://media3.giphy.com/media/kmFNdsZfgMo7e/giphy.gif'
     else #show different greetings based on the time during a day
-		if time.hour >= 5 and time.hour <= 14
-			message = greetings_mn.sample + ', ' + session[:first_name] + 'Would you like to pick your food today?'
-			determine_response body
-		elsif time.hour > 14 and time.hour <= 18
-			message = greetings_an.sample + ', ' + session[:first_name] + 'Would you like to pick your food today?'
-			determine_response body
-		else
-			message = greetings_en.sample + ', ' + session[:first_name] + 'Would you like to pick your food today?'
-			determine_response body
+    	message = 'Would you like to pick your food today?'
+		#if time.hour >= 5 and time.hour <= 14
+		#	message = greetings_mn.sample + ', ' + session[:first_name] + 'Would you like to pick your food today?'
+		#	determine_response body
+		#elsif time.hour > 14 and time.hour <= 18
+		#	message = greetings_an.sample + ', ' + session[:first_name] + 'Would you like to pick your food today?'
+		#	determine_response body
+		#else
+		#	message = greetings_en.sample + ', ' + session[:first_name] + 'Would you like to pick your food today?'
+		#	determine_response body
 		end
 	end
 	
