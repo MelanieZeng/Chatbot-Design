@@ -152,7 +152,7 @@ def determine_response body
 	elsif body == 'joke'
 		file = File.open("jokes.txt", "r")
 		array_of_lines = IO.readlines("jokes.txt")
-		return array_of_lines.sample + "\n Tell me if you like the joke by putting "jokewasgood" as an input for body. If not, put "jokewasbad" and I will try harder!"
+		return array_of_lines.sample + "\n Tell me if you like the joke by putting 'jokewasgood' as an input for body. If not, put 'jokewasbad' and I will try harder!"
 	elsif body == 'jokewasgood'
 		'Thank you for the complement. I am glad that you like it!'
 	elsif body == 'jokewasbad'
