@@ -138,8 +138,6 @@ def determine_response body
 	why_vocabs = ["why", "purpose", "for", "meaning"]
 	yes_vocabs = ["yes", "yeah", "yup", "sure", "sounds good", "ok"]
 
-	puts body
-
 	if body == 'hi' or has_vocab_in_sentence body, hi_vocabs
 		'Hi, I am "Eatappy". I am the food guide for you!'
 	elsif body == 'who' or has_vocab_in_sentence body, who_vocabs
