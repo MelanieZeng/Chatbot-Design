@@ -71,7 +71,8 @@ end
 #modify incoming/sms page
 get '/incoming/sms' do
 	session["counter"] ||= 1
-	body = params[:body] || ""
+
+	body = params[:Body] || ""
 	#session[:first_name] = params[:first_name]
 
 	if session["counter"] == 1
@@ -136,6 +137,8 @@ def determine_response body
 	when_vocabs = ["when", "created", "born", "made"]
 	why_vocabs = ["why", "purpose", "for", "meaning"]
 	yes_vocabs = ["yes", "yeah", "yup", "sure", "sounds good", "ok"]
+
+	puts body
 
 	if body == 'hi' or has_vocab_in_sentence body, hi_vocabs
 		'Hi, I am "Eatappy". I am the food guide for you!'
