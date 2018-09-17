@@ -86,7 +86,7 @@ get '/incoming/sms' do
 		r.message do |m|
 
 		# add the text of the response
-	    	m.body ( message + "You said: " + body + "\n It's message number " + session["counter"].to_s )
+	    	m.body ( message + " You said: " + body + "\n It's message number " + session["counter"].to_s )
 				
 			# add media if it is defined
 	    	unless media.nil?
@@ -129,13 +129,13 @@ end
 
 def determine_response body
 	body = body.downcase.strip
-	hi_vocabs = ["hi", "hello", "hey", "Hi", "Hello", "Hey"]
-	what_vocabs = ["what", "help", "feature", "function", "guide", "What", "Help", "Feature", "Function", "Guide"]
-	who_vocabs = ["who", "Who"]
-	where_vocabs = ["where", "location", "city", "Where", "Location", "City"]
-	when_vocabs = ["when", "created", "born", "made", "When", "Created", "Born", "Made"]
-	why_vocabs = ["why", "purpose", "for", "meaning", "Why", "Purpose", "For", "Meaning"]
-	yes_vocabs = ['Yes', 'Yeah', 'Yup', 'Sure', 'Sounds good', 'Ok', "yes", "yeah", "yup", "sure", "sounds good", "ok"]
+	hi_vocabs = ["hi", "hello", "hey"]
+	what_vocabs = ["what", "help", "feature", "function", "guide"]
+	who_vocabs = ["who", "do"]
+	where_vocabs = ["where", "location", "city"]
+	when_vocabs = ["when", "created", "born", "made"]
+	why_vocabs = ["why", "purpose", "for", "meaning"]
+	yes_vocabs = ["yes", "yeah", "yup", "sure", "sounds good", "ok"]
 
 	if body == 'hi' or has_vocab_in_sentence body, hi_vocabs
 		'Hi, I am "Eatappy". I am the food guide for you!'
@@ -157,14 +157,14 @@ def determine_response body
 		'Thank you for the complement. I am glad that you like it!'
 	elsif body == 'jokewasbad'
 		'Sorry, I am not good at jokes. But I will try harder :)'
-	elsif body == 'fact'
+	elsif body == 'fact' or body == 'Fact'
 		file = File.open("facts.txt", "r")
 		array_of_facts = IO.readlines("facts.txt")
 		return array_of_facts.sample
 	elsif has_vocab_in_sentence body, yes_vocabs
 		'Send me a selfie and let me see how you look now!'
 	else
-		"Oops! I didn't get that. Please put one of the follows as input for body: hi, who, what, where, when, why, joke, help and fact."
+		"Oops! I didn't get that. Please put one of the follows as input for body: hi, who, what, where, when, why, joke, help and fact. "
 	end
 end
 
