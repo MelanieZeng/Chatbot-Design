@@ -12,9 +12,9 @@ enable :sessions
 
 #glocal variables
 greetings = ["Hi there,", "Hello,", "Hi,", "How are you?", "How's it going?"]
-greetings_mn = ["Good morning", "Morning"]
-greetings_an = ["Good afternoon"]
-greetings_en = ["Good evening", "Evening"]
+greetings_mn = ["Good morning!", "Morning!"]
+greetings_an = ["Good afternoon!"]
+greetings_en = ["Good evening!", "Evening!"]
 secret_code = "melanieiscool"
 
 get '/' do 
@@ -70,20 +70,19 @@ end
 #modify incoming/sms page
 get '/incoming/sms' do
 	session["counter"] ||= 1
-	#session[:First_name] = params[:First_name]
 	time = Time.now
 
 	body = params[:Body] || ""
 
 	if session["counter"] == 1
 		if time.hour >= 5 and time.hour <= 12
-    		message = greetings_mn.sample + ", " + params[:first_name] + "! It's great to hear your first message! I am Eatappy 😋. Would you like to pick your breakfast or lunch? Send me a seflie that best describes your mood now! "
+    		message = greetings_mn.sample + " It's great to hear your first message! I am Eatappy 😋. Would you like to pick your breakfast or lunch? Send me a seflie that best describes your mood now! "
 			media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif"
 		elsif time.hour > 12 and time.hour <= 18
-			message = greetings_an.sample + ", " + params[:first_name] + "! It's great to hear your first message! I am Eatappy 😋. Would you like to pick your lunch or hightea? Send me a seflie that best describes your mood now! "
+			message = greetings_an.sample + " It's great to hear your first message! I am Eatappy 😋. Would you like to pick your lunch or hightea? Send me a seflie that best describes your mood now! "
 			media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif"
 		else
-			message = greetings_en.sample + ", " + params[:first_name] + "! It's great to hear your first message! I am Eatappy 😋. Would you like to pick your dinner? Send me a seflie that best describes your mood now! "
+			message = greetings_en.sample + " It's great to hear your first message! I am Eatappy 😋. Would you like to pick your dinner? Send me a seflie that best describes your mood now! "
 			media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif"
 		end
     else
