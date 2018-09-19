@@ -76,13 +76,13 @@ get '/incoming/sms' do
 
 	if session["counter"] == 1
 		if time.hour >= 5 and time.hour <= 12
-    		message = greetings_mn.sample + " It's great to hear your first message! I am Eatappy 😋. Would you like to pick your breakfast or lunch? Send me a seflie that best describes your mood now! "
+    		message = greetings_mn.sample + " It's great to hear your first message! I am Eatappy. 😋 Would you like to pick your breakfast or lunch? Send me a seflie that best describes your mood now! "
 			media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif"
 		elsif time.hour > 12 and time.hour <= 18
-			message = greetings_an.sample + " It's great to hear your first message! I am Eatappy 😋. Would you like to pick your lunch or hightea? Send me a seflie that best describes your mood now! "
+			message = greetings_an.sample + " It's great to hear your first message! I am Eatappy. 😋 Would you like to pick your lunch or hightea? Send me a seflie that best describes your mood now! "
 			media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif"
 		else
-			message = greetings_en.sample + " It's great to hear your first message! I am Eatappy 😋. Would you like to pick your dinner? Send me a seflie that best describes your mood now! "
+			message = greetings_en.sample + " It's great to hear your first message! I am Eatappy. 😋 Would you like to pick your dinner? Send me a seflie that best describes your mood now! "
 			media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif"
 		end
     else
@@ -121,14 +121,15 @@ def determine_response body
 	body = body.downcase.strip
 	hi_vocabs = ["hi", "hello", "hey"]
 	what_vocabs = ["what", "help", "feature", "function", "guide"]
-	who_vocabs = ["who", "do"]
+	who_vocabs = ["who"]
 	where_vocabs = ["where", "location", "city"]
 	when_vocabs = ["when", "created", "born", "made"]
 	why_vocabs = ["why", "purpose", "for", "meaning"]
+	joke_vocabs = ["joke", "jokes", "bored", "fun"]
 	yes_vocabs = ["yes", "yeah", "yup", "sure", "sounds good", "ok", "I'd love to"]
 
 	if has_vocab_in_sentence body, hi_vocabs
-		'Hi, I am "Eatappy". I am the food guide for you! Send me a selfie and I will customize your food and drink based on your mood. '
+		'Hi, I am Eatappy. I am the food guide for you! Send me a selfie and I will customize your food and drink based on your mood. '
 	elsif has_vocab_in_sentence body, who_vocabs
 		'I am a MeBot of Melanie Zeng. Reply "fact" to know more about Melanie! '
 	elsif has_vocab_in_sentence body, what_vocabs
@@ -139,13 +140,13 @@ def determine_response body
 		'I was created in Fall 2018! '
 	elsif has_vocab_in_sentence body, why_vocabs
 		'I was made by Melanie Zeng for her Programming for Online Prototypes Class! '
-	elsif body == 'joke'
+	elsif has_vocab_in_sentence body, joke_vocabs
 		file = File.open("jokes.txt", "r")
 		array_of_lines = IO.readlines("jokes.txt")
-		return array_of_lines.sample + "\n Reply 'jokewasgood' if you like it or 'jokewasbad' if you don't. Don't be mean to me please!"
-	elsif body == 'jokewasgood'
+		return array_of_lines.sample + "\n Reply 'Joke was good' if you like it or 'Joke was bad' if you don't. Don't be mean to me please!"
+	elsif body.include? 'good'
 		'Thank you for the complement. I am glad that you like it!'
-	elsif body == 'jokewasbad'
+	elsif body.include? 'bad'
 		'Sorry, I am not good at jokes. But I will try harder :)'
 	elsif body == 'fact'
 		file = File.open("facts.txt", "r")
