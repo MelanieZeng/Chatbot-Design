@@ -7,6 +7,4 @@ gem 'dotenv-rails', :groups => [:development, :test]
 
 gem 'twilio-ruby', ">5.0.0"
 
-gem 'rest_client'
-
-ruby '2.4.4'
+ruby '2.5.1'
