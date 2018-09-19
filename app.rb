@@ -70,20 +70,20 @@ end
 #modify incoming/sms page
 get '/incoming/sms' do
 	session["counter"] ||= 1
-	session[:First_name] = params[:First_name]
+	#session[:First_name] = params[:First_name]
 	time = Time.now
 
 	body = params[:Body] || ""
 
 	if session["counter"] == 1
-		if time.hour >= 5 and time.hour <= 10
-    		message = greetings_mn.sample + session[:First_name] + ", it's great to hear your first message! I am Eatappy 😋. Would you like to pick your breakfast? Send me a seflie that best describes your mood now! "
+		if time.hour >= 5 and time.hour <= 12
+    		message = greetings_mn.sample + " " + params[:first_name] + ", it's great to hear your first message! I am Eatappy 😋. Would you like to pick your breakfast or lunch? Send me a seflie that best describes your mood now! "
 			media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif"
-		elsif time.hour > 10 and time.hour <= 16
-			message = greetings_an.sample + session[:First_name] + ", it's great to hear your first message! I am Eatappy 😋. Would you like to pick your lunch or hightea? Send me a seflie that best describes your mood now! "
+		elsif time.hour > 12 and time.hour <= 18
+			message = greetings_an.sample + " " + params[:first_name] + ", it's great to hear your first message! I am Eatappy 😋. Would you like to pick your lunch or hightea? Send me a seflie that best describes your mood now! "
 			media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif"
 		else
-			message = greetings_en.sample + session[:First_name] + ", it's great to hear your first message! I am Eatappy 😋. Would you like to pick your dinner? Send me a seflie that best describes your mood now! "
+			message = greetings_en.sample + " " + params[:first_name] + ", it's great to hear your first message! I am Eatappy 😋. Would you like to pick your dinner? Send me a seflie that best describes your mood now! "
 			media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif"
 		end
     else
@@ -95,7 +95,7 @@ get '/incoming/sms' do
 		r.message do |m|
 
 		# add the text of the response
-	    	m.body ( message + " You said: " + body + "\n It's message number " + session["counter"].to_s )
+	    	m.body ( message )
 				
 			# add media if it is defined
 	    	unless media.nil?
