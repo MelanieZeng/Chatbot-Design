@@ -77,13 +77,13 @@ get '/incoming/sms' do
 
 	if session["counter"] == 1
 		if time.hour >= 5 and time.hour <= 12
-    		message = greetings_mn.sample + "! It's great to hear your first message! I am Eatappy 😋. Would you like to pick your breakfast or lunch? Send me a seflie that best describes your mood now! "
+    		message = greetings_mn.sample + ", " + params[:first_name] + "! It's great to hear your first message! I am Eatappy 😋. Would you like to pick your breakfast or lunch? Send me a seflie that best describes your mood now! "
 			media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif"
 		elsif time.hour > 12 and time.hour <= 18
-			message = greetings_an.sample + "! It's great to hear your first message! I am Eatappy 😋. Would you like to pick your lunch or hightea? Send me a seflie that best describes your mood now! "
+			message = greetings_an.sample + ", " + params[:first_name] + "! It's great to hear your first message! I am Eatappy 😋. Would you like to pick your lunch or hightea? Send me a seflie that best describes your mood now! "
 			media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif"
 		else
-			message = greetings_en.sample + "! It's great to hear your first message! I am Eatappy 😋. Would you like to pick your dinner? Send me a seflie that best describes your mood now! "
+			message = greetings_en.sample + ", " + params[:first_name] + "! It's great to hear your first message! I am Eatappy 😋. Would you like to pick your dinner? Send me a seflie that best describes your mood now! "
 			media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif"
 		end
     else
