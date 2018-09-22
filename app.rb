@@ -17,16 +17,6 @@ greetings_an = ["Good afternoon!"]
 greetings_en = ["Good evening!", "Evening!"]
 secret_code = "melanieiscool"
 
-#List all ingredients of Foodpairing API
-# get '/food' do
-
-# 	response = RestClient.get "https://api.foodpairing.com/ingredients/list-all-ingredients", headers: {
-# 		:"X-Application-ID" => ENV['X-Application-ID'], 
-# 		:"X-Application-Key" => ENV['X-Application-Key'], 
-# 		:"X-API-Version" => 1, 
-# 		Accept: "application/json"
-# 	}
-
 get '/' do 
 	session["visits"] ||= 0
 	session["visits"] = session["visits"] + 1 
@@ -78,24 +68,24 @@ post '/signup' do
 end
 
 #get url of incoming image
-# post 'incoming/image' do
-# 	num_media = params['NumMedia'].to_i
+Post 'incoming/image' do
+	num_media = params['NumMedia'].to_i
 
-# 	if num_media > 0
-# 		for i in 0..(num_media - 1) do
-# 			media_url = params["MediaUrl#{i}"]
-# 		end
-# 	end
+	if num_media > 0
+		for i in 0..(num_media - 1) do
+			media_url = params["MediaUrl#{i}"]
+		end
+	end
 
-# 	#pull emotion data from Face++ API
-# 	image_response = RestClient.post "https://api-us.faceplusplus.com/facepp/v3/detect", query: {
-# 		"api_key" => ENV['api_key'],
-# 		"api_secret" => ENV['api_secret'],
-# 		"image_url" => media_url 
-# 	}
+	#pull emotion data from Face++ API
+	image_response = RestClient.post "https://api-us.faceplusplus.com/facepp/v3/detect", query: {
+		"api_key" => ENV['api_key'],
+		"api_secret" => ENV['api_secret'],
+		"image_url" => "https://www.google.com/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&cad=rja&uact=8&ved=2ahUKEwjBz_3Tjs_dAhVBc98KHekYAOYQjRx6BAgBEAU&url=https%3A%2F%2Fggia.berkeley.edu%2Fpractice%2Fputting_a_human_face_on_suffering&psig=AOvVaw23P1ItdEo3HKlRBYL5Xg7y&ust=1537722981371333" 
+	}
 
-# 	puts image_response
-# end
+	puts image_response
+end
 
 #modify incoming/sms page
 get '/incoming/sms' do
@@ -120,27 +110,12 @@ get '/incoming/sms' do
     	message = determine_response body
     end
 
-    num_media = params['NumMedia'].to_i
-
-	if num_media > 0
-		for i in 0..(num_media - 1) do
-			media_url = params["MediaUrl#{i}"]
-		end
-	end
-
-	#pull emotion data from Face++ API
-	image_response = RestClient.post "https://api-us.faceplusplus.com/facepp/v3/detect", query: {
-		"api_key" => ENV['api_key'],
-		"api_secret" => ENV['api_secret'],
-		"image_url" => media_url 
-	}
-
 	# Build a twilio response object 
 	twiml = Twilio::TwiML::MessagingResponse.new do |r|
 		r.message do |m|
 
 		# add the text of the response
-	    	m.body ( message + image_response )
+	    	m.body ( message )
 				
 			# add media if it is defined
 	    	unless media.nil?
