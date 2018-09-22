@@ -2,6 +2,7 @@
 require 'sinatra'
 require 'sinatra/reloader' if development?
 require 'twilio-ruby'
+require 'rest-client'
 
 configure :development do
   require 'dotenv'
@@ -16,6 +17,20 @@ greetings_mn = ["Good morning!", "Morning!"]
 greetings_an = ["Good afternoon!"]
 greetings_en = ["Good evening!", "Evening!"]
 secret_code = "melanieiscool"
+
+#List all ingredients of Foodpairing API
+get '/food' do
+
+	puts "hey"
+
+	response = RestClient.get "https://api.foodpairing.com/ingredients/list-all-ingredients", headers: {
+		:"X-Application-ID" => ENV['X-Application-ID'], 
+		:"X-Application-Key" => ENV['X-Application-Key'], 
+		:"X-API-Version" => 1, 
+		Accept: "application/json"
+	}
+	puts response
+end
 
 get '/' do 
 	session["visits"] ||= 0
@@ -75,6 +90,7 @@ get '/incoming/sms' do
 	body = params[:Body] || ""
 
 	if session["counter"] == 1
+		#greeting based on different time of a day
 		if time.hour >= 5 and time.hour <= 12
     		message = greetings_mn.sample + " It's great to hear your first message! I am Eatappy. 😋 Would you like to pick your breakfast or lunch? Send me a seflie that best describes your mood now! "
 			media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif"
@@ -89,6 +105,16 @@ get '/incoming/sms' do
     	message = determine_response body
     end
 	
+	#allow users to upload selfies - Should it be query or header??
+	response = RestClient.post "https://api-us.faceplusplus.com/facepp/v3/detect", query: {
+		"api_key" => ENV['api_key'],
+		"api_secret" => ENV['api_secret'],
+		"image_url" => "http://something.some/image.jpg" 
+	}
+
+	#skinstatus = response.skinstatus
+	#emotion = response.emotion
+
 	# Build a twilio response object 
 	twiml = Twilio::TwiML::MessagingResponse.new do |r|
 		r.message do |m|
@@ -144,9 +170,9 @@ def determine_response body
 		file = File.open("jokes.txt", "r")
 		array_of_lines = IO.readlines("jokes.txt")
 		return array_of_lines.sample + "\n Reply 'Joke was good' if you like it or 'Joke was bad' if you don't. Don't be mean to me please!"
-	elsif body.include? 'good'
+	elsif body.include? 'Joke was good'
 		'Thank you for the complement. I am glad that you like it!'
-	elsif body.include? 'bad'
+	elsif body.include? 'Joke was bad'
 		'Sorry, I am not good at jokes. But I will try harder :)'
 	elsif body == 'fact'
 		file = File.open("facts.txt", "r")
