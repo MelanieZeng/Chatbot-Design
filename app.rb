@@ -1,7 +1,7 @@
 require 'sinatra'
 require 'sinatra/reloader' if development?
 require 'twilio-ruby'
-require 'rest-client'
+require 'httparty'
 
 configure :development do
   require 'dotenv'
@@ -68,7 +68,7 @@ post '/signup' do
 end
 
 #get url of incoming image
-Post 'incoming/image' do
+post 'incoming/image' do
 	num_media = params['NumMedia'].to_i
 
 	if num_media > 0
@@ -78,12 +78,10 @@ Post 'incoming/image' do
 	end
 
 	#pull emotion data from Face++ API
-	image_response = RestClient.post "https://api-us.faceplusplus.com/facepp/v3/detect", query: {
-		"api_key" => ENV['api_key'],
-		"api_secret" => ENV['api_secret'],
-		"image_url" => "https://www.google.com/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&cad=rja&uact=8&ved=2ahUKEwjBz_3Tjs_dAhVBc98KHekYAOYQjRx6BAgBEAU&url=https%3A%2F%2Fggia.berkeley.edu%2Fpractice%2Fputting_a_human_face_on_suffering&psig=AOvVaw23P1ItdEo3HKlRBYL5Xg7y&ust=1537722981371333" 
-	}
-
+	api_key = ENV[api_key]
+	api_secret = ENV[api_secret]
+	image_url = "https://www.google.com/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&cad=rja&uact=8&ved=2ahUKEwjBz_3Tjs_dAhVBc98KHekYAOYQjRx6BAgBEAU&url=https%3A%2F%2Fggia.berkeley.edu%2Fpractice%2Fputting_a_human_face_on_suffering&psig=AOvVaw23P1ItdEo3HKlRBYL5Xg7y&ust=1537722981371333"
+	image_response = HTTParty.post "https://api-us.faceplusplus.com/facepp/v3/detect/api_key/api_secret/image_url"
 	puts image_response
 end
 
