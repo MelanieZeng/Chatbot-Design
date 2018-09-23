@@ -213,7 +213,7 @@ end
 # end
 
 #modify incoming/sms page
-post '/incoming/sms' do
+get '/incoming/sms' do
 	session["counter"] ||= 1
 	time = Time.now
 	media_url = params["MediaUrl"]
