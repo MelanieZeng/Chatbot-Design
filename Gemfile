@@ -7,6 +7,6 @@ gem 'dotenv-rails', :groups => [:development, :test]
 
 gem 'twilio-ruby', ">5.0.0"
 
-gem 'httparty'
+gem 'json'
 
 ruby '2.5.1'

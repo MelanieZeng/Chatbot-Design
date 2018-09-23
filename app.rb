@@ -1,7 +1,8 @@
 require 'sinatra'
 require 'sinatra/reloader' if development?
 require 'twilio-ruby'
-require 'httparty'
+require 'net/http'
+require 'json'
 
 configure :development do
   require 'dotenv'
@@ -68,29 +69,186 @@ post '/signup' do
 end
 
 #get url of incoming image
-post 'incoming/image' do
-	num_media = params['NumMedia'].to_i
+# get '/image/test' do
+	
+# 	# num_media = params['NumMedia'].to_i
 
-	if num_media > 0
-		for i in 0..(num_media - 1) do
-			media_url = params["MediaUrl#{i}"]
-		end
-	end
+# 	# if num_media > 0
+# 	# 	for i in 0..(num_media - 1) do
+# 	# 		media_url = params["MediaUrl#{i}"]
+# 	# 	end
+# 	# end
 
-	#pull emotion data from Face++ API
-	api_key = ENV[api_key]
-	api_secret = ENV[api_secret]
-	image_url = "https://www.google.com/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&cad=rja&uact=8&ved=2ahUKEwjBz_3Tjs_dAhVBc98KHekYAOYQjRx6BAgBEAU&url=https%3A%2F%2Fggia.berkeley.edu%2Fpractice%2Fputting_a_human_face_on_suffering&psig=AOvVaw23P1ItdEo3HKlRBYL5Xg7y&ust=1537722981371333"
-	image_response = HTTParty.post "https://api-us.faceplusplus.com/facepp/v3/detect/api_key/api_secret/image_url"
-	puts image_response
-end
+# 	# Pull facial recoginition data from Microsoft Azure
+# 	# You must use the same location in your REST call as you used to get your
+# 	# subscription keys. For example, if you got your subscription keys from  westus,
+# 	# replace "westcentralus" in the URL below with "westus".
+# 	uri = URI('https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect')
+# 	uri.query = URI.encode_www_form({
+# 	    # Request parameters
+# 	    'returnFaceId' => 'true',
+# 	    'returnFaceLandmarks' => 'false',
+# 	    'returnFaceAttributes' => 'age,gender,headPose,smile,facialHair,glasses,' +
+# 	        'emotion,hair,makeup,occlusion,accessories,blur,exposure,noise'
+# 	})
+
+# 	request = Net::HTTP::Post.new(uri.request_uri)
+
+# 	# Request headers
+# 	# Replace <Subscription Key> with your valid subscription key.
+# 	request['Ocp-Apim-Subscription-Key'] = ENV['key_1']
+# 	request['Content-Type'] = 'application/json'
+
+# 	imageUri = "https://www.yourtango.com/sites/default/files/styles/body_image_default/public/image_list/smile_0.jpg?itok=T_VpgMvQ"
+# 	request.body = "{\"url\": \"" + imageUri + "\"}"
+
+# 	response = Net::HTTP.start(uri.host, uri.port, :use_ssl => uri.scheme == 'https') do |http|
+# 	    http.request(request)
+# 	end
+
+# 	#pull the data I need
+# 	data = JSON.parse(response.body)
+# 	face_attributes = data[0]["faceAttributes"]
+# 	age = face_attributes["age"].to_i
+# 	emotion_set = face_attributes["emotion"]
+# 	emotion_hash = emotion_set.select {|k,v| v == emotion_set.values.max }
+# 	emotion = emotion_hash.keys
+
+# 	if age < 16
+# 		uri = URI ("https://www.thecocktaildb.com/api/json/v1/1/filter.php?a=Non_Alcoholic")
+# 		response = Net::HTTP.get(uri)
+# 		drink_dicionary = JSON.parse(response)
+# 		drink_array = drink_dicionary["drinks"]
+# 		drink = drink_array.sample
+# 		message = "You seem too young to try alcoholic drinks! How about trying " + drink["strDrink"] + "?"
+# 		media = drink["strDrinkThumb"]
+
+# 	elsif age >= 16
+# 		if emotion == "anger"
+# 			uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Coffee%20/%20Tea")
+# 			response = Net::HTTP.get(uri)
+# 			drink_dicionary = JSON.parse(response)
+# 			drink_array = drink_dicionary["drinks"]
+# 			drink = drink_array.sample
+# 			message = "Chill bro! Try some " + drink["strDrink"] + ". "
+# 			media = drink["strDrinkThumb"]
+# 		elsif emotion == "contempt"
+# 			uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Homemade%20Liqueur")
+# 			response = Net::HTTP.get(uri)
+# 			drink_dicionary = JSON.parse(response)
+# 			drink_array = drink_dicionary["drinks"]
+# 			drink = drink_array.sample
+# 			message = "Don't judge the " + drink["strDrink"] + ". "
+# 			media = drink["strDrinkThumb"]
+# 		elsif emotion == "disgust"
+# 			uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Shot")
+# 			response = Net::HTTP.get(uri)
+# 			drink_dicionary = JSON.parse(response)
+# 			drink_array = drink_dicionary["drinks"]
+# 			drink = drink_array.sample
+# 			message = "Take this " + drink["strDrink"] + "shot and don't stop! "
+# 			media = drink["strDrinkThumb"]
+# 		elsif emotion == "fear"
+# 			uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Cocoa")
+# 			response = Net::HTTP.get(uri)
+# 			drink_dicionary = JSON.parse(response)
+# 			drink_array = drink_dicionary["drinks"]
+# 			drink = drink_array.sample
+# 			message = "Are you ok? I think you need some " + drink["strDrink"]
+# 			media = drink["strDrinkThumb"]
+# 		elsif emotion == "happiness"
+# 			uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Punch%20/%20Party%20Drink")
+# 			response = Net::HTTP.get(uri)
+# 			drink_dicionary = JSON.parse(response)
+# 			drink_array = drink_dicionary["drinks"]
+# 			drink = drink_array.sample
+# 			message = "Let's partyyy! Get some " + drink["strDrink"]
+# 			media = drink["strDrinkThumb"]
+# 		elsif emotion == "neutral"
+# 			uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Cocktail")
+# 			response = Net::HTTP.get(uri)
+# 			drink_dicionary = JSON.parse(response)
+# 			drink_array = drink_dicionary["drinks"]
+# 			drink = drink_array.sample
+# 			message = "Yo I got you some " + drink["strDrink"]
+# 			media = drink["strDrinkThumb"]
+# 		elsif emotion == "sadness"
+# 			uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Beer")
+# 			response = Net::HTTP.get(uri)
+# 			drink_dicionary = JSON.parse(response)
+# 			drink_array = drink_dicionary["drinks"]
+# 			drink = drink_array.sample
+# 			message = "Aww you look so sad! Try some " + drink["strDrink"]
+# 			media = drink["strDrinkThumb"]
+# 		elsif emotion == "surprise"
+# 			uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Ordinary_Drink")
+# 			response = Net::HTTP.get(uri)
+# 			drink_dicionary = JSON.parse(response)
+# 			drink_array = drink_dicionary["drinks"]
+# 			drink = drink_array.sample
+# 			message = "You look surprised! How about a " + drink["strDrink"]
+# 			media = drink["strDrinkThumb"]
+# 		else
+# 			uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Milk%20/%20Float%20/%20Shake")
+# 			response = Net::HTTP.get(uri)
+# 			drink_dicionary = JSON.parse(response)
+# 			drink_array = drink_dicionary["drinks"]
+# 			drink = drink_array.sample
+# 			message = "Hey, try some " + drink["strDrink"]
+# 			media = drink["strDrinkThumb"]
+# 		end
+# 	else
+# 		uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Other/Unknown")
+# 		response = Net::HTTP.get(uri)
+# 		drink_dicionary = JSON.parse(response)
+# 		drink_array = drink_dicionary["drinks"]
+# 		drink = drink_array.sample
+# 		message = "Would you like some " + drink["strDrink"]
+# 		media = drink["strDrinkThumb"]
+# 	end
+    
+#     puts message, media
+
+# end
 
 #modify incoming/sms page
 get '/incoming/sms' do
 	session["counter"] ||= 1
 	time = Time.now
-
+	media_url = params["MediaUrl"]
 	body = params[:Body] || ""
+
+	# Pull facial recoginition data from Microsoft Azure
+    uri = URI('https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect')
+	uri.query = URI.encode_www_form({
+	    # Request parameters
+	    'returnFaceId' => 'true',
+	    'returnFaceLandmarks' => 'false',
+	    'returnFaceAttributes' => 'age,gender,headPose,smile,facialHair,glasses,' +
+	        'emotion,hair,makeup,occlusion,accessories,blur,exposure,noise'
+	})
+
+	request = Net::HTTP::Post.new(uri.request_uri)
+
+	# Request headers
+	# Replace <Subscription Key> with your valid subscription key.
+	request['Ocp-Apim-Subscription-Key'] = ENV['key_1']
+	request['Content-Type'] = 'application/json'
+
+	imageUri = media_url
+	request.body = "{\"url\": \"" + imageUri + "\"}"
+
+	response = Net::HTTP.start(uri.host, uri.port, :use_ssl => uri.scheme == 'https') do |http|
+	    http.request(request)
+	end
+
+	#pull the data I need
+	data = JSON.parse(response.body)
+	face_attributes = data[0]["faceAttributes"]
+	age = face_attributes["age"].to_i
+	emotion_set = face_attributes["emotion"]
+	emotion_hash = emotion_set.select {|k,v| v == emotion_set.values.max }
+	emotion = emotion_hash.keys
 
 	if session["counter"] == 1
 		#greeting based on different time of a day
@@ -105,8 +263,104 @@ get '/incoming/sms' do
 			media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif"
 		end
     else
-    	message = determine_response body
-    end
+    	if media_url.nil?
+    		message = determine_response body
+    	else
+			if age < 16
+				uri = URI ("https://www.thecocktaildb.com/api/json/v1/1/filter.php?a=Non_Alcoholic")
+				response = Net::HTTP.get(uri)
+				drink_dicionary = JSON.parse(response)
+				drink_array = drink_dicionary["drinks"]
+				drink = drink_array.sample
+				message = "You seem too young to try alcoholic drinks! How about trying " + drink["strDrink"] + "?"
+				media = drink["strDrinkThumb"]
+
+			elsif age >= 16
+				if emotion == "anger"
+					uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Coffee%20/%20Tea")
+					response = Net::HTTP.get(uri)
+					drink_dicionary = JSON.parse(response)
+					drink_array = drink_dicionary["drinks"]
+					drink = drink_array.sample
+					message = "Chill bro! Try some " + drink["strDrink"] + ". "
+					media = drink["strDrinkThumb"]
+				elsif emotion == "contempt"
+					uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Homemade%20Liqueur")
+					response = Net::HTTP.get(uri)
+					drink_dicionary = JSON.parse(response)
+					drink_array = drink_dicionary["drinks"]
+					drink = drink_array.sample
+					message = "Don't judge the " + drink["strDrink"] + ". "
+					media = drink["strDrinkThumb"]
+				elsif emotion == "disgust"
+					uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Shot")
+					response = Net::HTTP.get(uri)
+					drink_dicionary = JSON.parse(response)
+					drink_array = drink_dicionary["drinks"]
+					drink = drink_array.sample
+					message = "Take this " + drink["strDrink"] + "shot and don't stop! "
+					media = drink["strDrinkThumb"]
+				elsif emotion == "fear"
+					uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Cocoa")
+					response = Net::HTTP.get(uri)
+					drink_dicionary = JSON.parse(response)
+					drink_array = drink_dicionary["drinks"]
+					drink = drink_array.sample
+					message = "Are you ok? I think you need some " + drink["strDrink"]
+					media = drink["strDrinkThumb"]
+				elsif emotion == "happiness"
+					uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Punch%20/%20Party%20Drink")
+					response = Net::HTTP.get(uri)
+					drink_dicionary = JSON.parse(response)
+					drink_array = drink_dicionary["drinks"]
+					drink = drink_array.sample
+					message = "Let's partyyy! Get some " + drink["strDrink"]
+					media = drink["strDrinkThumb"]
+				elsif emotion == "neutral"
+					uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Cocktail")
+					response = Net::HTTP.get(uri)
+					drink_dicionary = JSON.parse(response)
+					drink_array = drink_dicionary["drinks"]
+					drink = drink_array.sample
+					message = "Yo I got you some " + drink["strDrink"]
+					media = drink["strDrinkThumb"]
+				elsif emotion == "sadness"
+					uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Beer")
+					response = Net::HTTP.get(uri)
+					drink_dicionary = JSON.parse(response)
+					drink_array = drink_dicionary["drinks"]
+					drink = drink_array.sample
+					message = "Aww you look so sad! Try some " + drink["strDrink"]
+					media = drink["strDrinkThumb"]
+				elsif emotion == "surprise"
+					uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Ordinary_Drink")
+					response = Net::HTTP.get(uri)
+					drink_dicionary = JSON.parse(response)
+					drink_array = drink_dicionary["drinks"]
+					drink = drink_array.sample
+					message = "You look surprised! How about a " + drink["strDrink"]
+					media = drink["strDrinkThumb"]
+				else
+					uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Milk%20/%20Float%20/%20Shake")
+					response = Net::HTTP.get(uri)
+					drink_dicionary = JSON.parse(response)
+					drink_array = drink_dicionary["drinks"]
+					drink = drink_array.sample
+					message = "Hey, try some " + drink["strDrink"]
+					media = drink["strDrinkThumb"]
+				end
+			else
+				uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Other/Unknown")
+				response = Net::HTTP.get(uri)
+				drink_dicionary = JSON.parse(response)
+				drink_array = drink_dicionary["drinks"]
+				drink = drink_array.sample
+				message = "Would you like some " + drink["strDrink"]
+				media = drink["strDrinkThumb"]
+			end
+		end
+	end
+
 
 	# Build a twilio response object 
 	twiml = Twilio::TwiML::MessagingResponse.new do |r|
