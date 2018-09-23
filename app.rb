@@ -218,14 +218,14 @@ get '/incoming/sms' do
 	time = Time.now
 	num_media = params['NumMedia'].to_i
 	if num_media > 0
-   		for i in 0..(num_media - 1) do
-    	# Prepare the file information
-    		media_url = params["MediaUrl#{i}"]
-    	end
-    end
+    	for i in 0..(num_media - 1) do
+    		media_content = params[:MediaContentType0] || ""
+			media_url = params[:MediaUrl0] || ""
+		end
+	end
 	body = params[:Body] || ""
 
-	unless media_url.nil? or media_url.empty? 
+	if not media_url.nil? and not media_url == "" and media_content.include? "image" 
 
 		# Pull facial recoginition data from Microsoft Azure
 	    uri = URI('https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect')
@@ -279,7 +279,7 @@ get '/incoming/sms' do
 			media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif"
 		end
     else
-    	if media_url.nil?
+    	if face_recogition_successful == true
     		message = determine_response body
     	else
 			if age < 16
