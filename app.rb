@@ -216,49 +216,55 @@ end
 get '/incoming/sms' do
 	session["counter"] ||= 1
 	time = Time.now
-	media_url = params["MediaUrl"]
+	num_media = params['NumMedia'].to_i
+	if num_media > 0
+   		for i in 0..(num_media - 1) do
+    	# Prepare the file information
+    		media_url = params["MediaUrl#{i}"]
+    	end
+    end
 	body = params[:Body] || ""
 
-	#unless media_url.nil? or media_url.empty? 
+	unless media_url.nil? or media_url.empty? 
 
 		# Pull facial recoginition data from Microsoft Azure
-    uri = URI('https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect')
-	uri.query = URI.encode_www_form({
-	    # Request parameters
-	    'returnFaceId' => 'true',
-	    'returnFaceLandmarks' => 'false',
-	    'returnFaceAttributes' => 'age,gender,headPose,smile,facialHair,glasses,' +
-	        'emotion,hair,makeup,occlusion,accessories,blur,exposure,noise'
-	})
+	    uri = URI('https://westcentralus.api.cognitive.microsoft.com/face/v1.0/detect')
+		uri.query = URI.encode_www_form({
+		    # Request parameters
+		    'returnFaceId' => 'true',
+		    'returnFaceLandmarks' => 'false',
+		    'returnFaceAttributes' => 'age,gender,headPose,smile,facialHair,glasses,' +
+		        'emotion,hair,makeup,occlusion,accessories,blur,exposure,noise'
+		})
 
-	request = Net::HTTP::Post.new(uri.request_uri)
+		request = Net::HTTP::Post.new(uri.request_uri)
 
-	# Request headers
-	# Replace <Subscription Key> with your valid subscription key.
-	request['Ocp-Apim-Subscription-Key'] = ENV['key_1']
-	request['Content-Type'] = 'application/json'
+		# Request headers
+		# Replace <Subscription Key> with your valid subscription key.
+		request['Ocp-Apim-Subscription-Key'] = ENV['key_1']
+		request['Content-Type'] = 'application/json'
 
-	imageUri = media_url
-	request.body = "{\"url\": \"" + imageUri + "\"}"
+		imageUri = media_url
+		request.body = "{\"url\": \"" + imageUri + "\"}"
 
-	response = Net::HTTP.start(uri.host, uri.port, :use_ssl => uri.scheme == 'https') do |http|
-	    http.request(request)
+		response = Net::HTTP.start(uri.host, uri.port, :use_ssl => uri.scheme == 'https') do |http|
+		    http.request(request)
+		end
+
+		#pull the data I need
+		data = JSON.parse(response.body)
+		face_attributes = data[0]["faceAttributes"]
+		age = face_attributes["age"].to_i
+		emotion_set = face_attributes["emotion"]
+		emotion_set_max_value_map = emotion_set.select {|k,v| v == emotion_set.values.max } #It's a dictionary
+		emotion_keys = emotion_set_max_value_map.keys #It's an array
+		emotion = emotion_keys[0] #Take the first string
+
+		face_recogition_successful = true
+
+	else
+		face_recogition_successful = false
 	end
-
-	#pull the data I need
-	data = JSON.parse(response.body)
-	face_attributes = data[0]["faceAttributes"]
-	age = face_attributes["age"].to_i
-	emotion_set = face_attributes["emotion"]
-	emotion_set_max_value_map = emotion_set.select {|k,v| v == emotion_set.values.max } #It's a dictionary
-	emotion_keys = emotion_set_max_value_map.keys #It's an array
-	emotion = emotion_keys[0] #Take the first string
-
-	# 	face_recogition_successful = true
-
-	# else
-	# 	face_recogition_successful = false
-	# end
 
 	if session["counter"] == 1
 		#greeting based on different time of a day
