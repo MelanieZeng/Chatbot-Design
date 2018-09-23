@@ -23,7 +23,7 @@ get '/' do
 	session["visits"] = session["visits"] + 1 
 	time = Time.now
 	if session[:first_name].nil?
-		'What is the best food and drink for a summer night when you are sitting at the bench in your backyard and enjoying the wind gently blowing through your hair? Show me a selfie and I will customize the best food + drink combincation for you! Sign up to chat with me now! <br />Total visits on our website: ' + session["visits"].to_s
+		"Imagine you are sitting in a nice bar and wondering what drink you should get. Your bartender made you a perfect cocktail for the night. Wouldn't it be nice?! Sign up to chat with me now! <br />Total visits on our website: " + session["visits"].to_s
     else 
     	if session["visits"] > 10 #make a user a VIP after they visit the website more than 10 times
     		session[:first_name] + ', You are a VIP now!' + '<br /> You have visited ' + session["visits"].to_s + ' times as of ' + time.strftime("%A %B %d, %Y %H:%M")
@@ -213,7 +213,7 @@ end
 # end
 
 #modify incoming/sms page
-get '/incoming/sms' do
+Post '/incoming/sms' do
 	session["counter"] ||= 1
 	time = Time.now
 	media_url = params["MediaUrl"]
