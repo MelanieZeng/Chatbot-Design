@@ -12,7 +12,7 @@ end
 enable :sessions
 
 #glocal variables
-greetings = ["Hi there,", "Hello,", "Hi,", "How are you?", "How's it going?"]
+greetings = ["Hi there,", "Hello,", "Hi,", "How are you?", "How's it going?", "Hey!", "What's up!"]
 greetings_mn = ["Good morning!", "Morning!"]
 greetings_an = ["Good afternoon!"]
 greetings_en = ["Good evening!", "Evening!"]
@@ -255,13 +255,13 @@ get '/incoming/sms' do
 	if session["counter"] == 1
 		#greeting based on different time of a day
 		if time.hour >= 5 and time.hour <= 12
-    		message = greetings_mn.sample + " It's great to hear your first message! I am Eatappy. 😋 Would you like to pick your breakfast or lunch? Send me a seflie that best describes your mood now! "
+    		message = greetings_mn.sample + " Great to hear your first message! I am Moscow Muler🍸. Would you like to pick your morning drink? Send me a seflie that best describes your mood now! "
 			media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif"
 		elsif time.hour > 12 and time.hour <= 18
-			message = greetings_an.sample + " It's great to hear your first message! I am Eatappy. 😋 Would you like to pick your lunch or hightea? Send me a seflie that best describes your mood now! "
+			message = greetings_an.sample + " Great to hear your first message! I am Moscow Muler🍸. Would you like to pick your afternoon drink? Send me a seflie that best describes your mood now! "
 			media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif"
 		else
-			message = greetings_en.sample + " It's great to hear your first message! I am Eatappy. 😋 Would you like to pick your dinner? Send me a seflie that best describes your mood now! "
+			message = greetings_en.sample + " Great to hear your first message! I am Moscow Muler🍸. Are you ready to partyyy? Show me your ready-party selfie and let me pick a drink for ya! "
 			media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif"
 		end
     else
@@ -308,7 +308,7 @@ get '/incoming/sms' do
 					drink_dicionary = JSON.parse(response)
 					drink_array = drink_dicionary["drinks"]
 					drink = drink_array.sample
-					message = "Are you ok? I think you need some " + drink["strDrink"]
+					message = "Are you ok? I think you need some " + drink["strDrink"] + ". "
 					media = drink["strDrinkThumb"]
 				elsif emotion == "happiness"
 					uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Punch%20/%20Party%20Drink")
@@ -316,7 +316,7 @@ get '/incoming/sms' do
 					drink_dicionary = JSON.parse(response)
 					drink_array = drink_dicionary["drinks"]
 					drink = drink_array.sample
-					message = "Let's partyyy! Get some " + drink["strDrink"]
+					message = "Let's partyyy! Get some " + drink["strDrink"] + "! "
 					media = drink["strDrinkThumb"]
 				elsif emotion == "neutral"
 					uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Cocktail")
@@ -324,7 +324,7 @@ get '/incoming/sms' do
 					drink_dicionary = JSON.parse(response)
 					drink_array = drink_dicionary["drinks"]
 					drink = drink_array.sample
-					message = "Yo I got you some " + drink["strDrink"]
+					message = "Yo I got you some " + drink["strDrink"] + "! "
 					media = drink["strDrinkThumb"]
 				elsif emotion == "sadness"
 					uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Beer")
@@ -332,7 +332,7 @@ get '/incoming/sms' do
 					drink_dicionary = JSON.parse(response)
 					drink_array = drink_dicionary["drinks"]
 					drink = drink_array.sample
-					message = "Aww you look so sad! Try some " + drink["strDrink"]
+					message = "Aww you look so sad! Try some " + drink["strDrink"] + ". "
 					media = drink["strDrinkThumb"]
 				elsif emotion == "surprise"
 					uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Ordinary_Drink")
@@ -340,7 +340,7 @@ get '/incoming/sms' do
 					drink_dicionary = JSON.parse(response)
 					drink_array = drink_dicionary["drinks"]
 					drink = drink_array.sample
-					message = "You look surprised! How about a " + drink["strDrink"]
+					message = "You look surprised! How about a " + drink["strDrink"] + "? "
 					media = drink["strDrinkThumb"]
 				else
 					uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Milk%20/%20Float%20/%20Shake")
@@ -348,7 +348,7 @@ get '/incoming/sms' do
 					drink_dicionary = JSON.parse(response)
 					drink_array = drink_dicionary["drinks"]
 					drink = drink_array.sample
-					message = "Hey, try some " + drink["strDrink"]
+					message = "Hey, try some " + drink["strDrink"] + ". "
 					media = drink["strDrinkThumb"]
 				end
 			else
@@ -357,7 +357,7 @@ get '/incoming/sms' do
 				drink_dicionary = JSON.parse(response)
 				drink_array = drink_dicionary["drinks"]
 				drink = drink_array.sample
-				message = "Would you like some " + drink["strDrink"]
+				message = "Would you like some " + drink["strDrink"] + "? "
 				media = drink["strDrinkThumb"]
 			end
 		end
@@ -404,11 +404,11 @@ def determine_response body
 	yes_vocabs = ["yes", "yeah", "yup", "sure", "sounds good", "ok", "I'd love to"]
 
 	if has_vocab_in_sentence body, hi_vocabs
-		'Hi, I am Eatappy. I am the food guide for you! Send me a selfie and I will customize your food and drink based on your mood. '
+		'Hey, I am Moscow Muler 🍸! I am your bartender tonight! Show me your ready-party look and I will pick the perfect drink for ya! '
 	elsif has_vocab_in_sentence body, who_vocabs
 		'I am a MeBot of Melanie Zeng. Reply "fact" to know more about Melanie! '
 	elsif has_vocab_in_sentence body, what_vocabs
-		'Let me know how you feel by showing me a selfie and I will help you to pick your food and drink! '
+		'I can pick the perfect cocktail based on your mood for you or a get-her/get-him drink for your girl/man tonight! 😉'
 	elsif has_vocab_in_sentence body, where_vocabs
 		'I live in Pittsburgh! '
 	elsif has_vocab_in_sentence body, when_vocabs
@@ -420,15 +420,15 @@ def determine_response body
 		array_of_lines = IO.readlines("jokes.txt")
 		return array_of_lines.sample + "\n Reply 'Joke was good' if you like it or 'Joke was bad' if you don't. Don't be mean to me please!"
 	elsif body.include? 'Joke was good'
-		'Thank you for the complement. I am glad that you like it!'
+		'Thank you for the complement. I am glad that you like it! 😊'
 	elsif body.include? 'Joke was bad'
-		'Sorry, I am not good at jokes. But I will try harder :)'
+		'Sorry, I am not good at jokes. But I will try harder. 😔'
 	elsif body == 'fact'
 		file = File.open("facts.txt", "r")
 		array_of_facts = IO.readlines("facts.txt")
 		return array_of_facts.sample
 	else
-		"Oops! I didn't get that. Reply 'hi', 'who', 'what' or 'why' if you want to learn more about me. "
+		"Oops! I didn't get that. Say 'hi', 'who', 'what' or 'why' if you want to know more about me. "
 	end
 end
 
