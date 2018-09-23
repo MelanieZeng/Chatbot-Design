@@ -71,13 +71,13 @@ end
 #get url of incoming image
 # get '/image/test' do
 	
-# 	# num_media = params['NumMedia'].to_i
+# # 	# num_media = params['NumMedia'].to_i
 
-# 	# if num_media > 0
-# 	# 	for i in 0..(num_media - 1) do
-# 	# 		media_url = params["MediaUrl#{i}"]
-# 	# 	end
-# 	# end
+# # 	# if num_media > 0
+# # 	# 	for i in 0..(num_media - 1) do
+# # 	# 		media_url = params["MediaUrl#{i}"]
+# # 	# 	end
+# # 	# end
 
 # 	# Pull facial recoginition data from Microsoft Azure
 # 	# You must use the same location in your REST call as you used to get your
@@ -111,8 +111,9 @@ end
 # 	face_attributes = data[0]["faceAttributes"]
 # 	age = face_attributes["age"].to_i
 # 	emotion_set = face_attributes["emotion"]
-# 	emotion_hash = emotion_set.select {|k,v| v == emotion_set.values.max }
-# 	emotion = emotion_hash.keys
+# 	emotion_set_max_value_map = emotion_set.select {|k,v| v == emotion_set.values.max } #It's a dictionary
+# 	emotion_keys = emotion_set_max_value_map.keys #It's an array
+# 	emotion = emotion_keys[0] #Take the first string
 
 # 	if age < 16
 # 		uri = URI ("https://www.thecocktaildb.com/api/json/v1/1/filter.php?a=Non_Alcoholic")
@@ -207,7 +208,7 @@ end
 # 		media = drink["strDrinkThumb"]
 # 	end
     
-#     puts message, media
+#     puts age, emotion, message, media
 
 # end
 
@@ -247,8 +248,9 @@ get '/incoming/sms' do
 	face_attributes = data[0]["faceAttributes"]
 	age = face_attributes["age"].to_i
 	emotion_set = face_attributes["emotion"]
-	emotion_hash = emotion_set.select {|k,v| v == emotion_set.values.max }
-	emotion = emotion_hash.keys
+	emotion_set_max_value_map = emotion_set.select {|k,v| v == emotion_set.values.max } #It's a dictionary
+	emotion_keys = emotion_set_max_value_map.keys #It's an array
+	emotion = emotion_keys[0] #Take the first string
 
 	if session["counter"] == 1
 		#greeting based on different time of a day
