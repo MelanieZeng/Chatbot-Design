@@ -216,13 +216,8 @@ end
 get '/incoming/sms' do
 	session["counter"] ||= 1
 	time = Time.now
-	num_media = params['NumMedia'].to_i
-	if num_media > 0
-    	for i in 0..(num_media - 1) do
-    		media_content = params[:MediaContentType0] || ""
-			media_url = params[:MediaUrl0] || ""
-		end
-	end
+	media_content = params[:MediaContentType0] || ""
+	media_url = params[:MediaUrl0] || ""
 	body = params[:Body] || ""
 
 	if not media_url.nil? and not media_url == "" and media_content.include? "image" 
