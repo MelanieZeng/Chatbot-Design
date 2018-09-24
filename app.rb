@@ -58,7 +58,7 @@ post '/signup' do
 			session[:first_name] = params[:first_name]
 			session[:number] = params[:number]
 			# this will send a message from any end point
-			client.api.account.messages.create(
+			Client.api.account.messages.create(
 				from: ENV["TWILIO_FROM"],
 				to: params[:number],
 				body: 'Hi ' + session[:first_name] + ', you are all set!'
