@@ -9,6 +9,4 @@ gem 'twilio-ruby', ">5.0.0"
 
 gem 'json'
 
-gem 'mime-types'
-
 ruby '2.5.1'

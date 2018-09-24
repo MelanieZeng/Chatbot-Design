@@ -1,5 +1,3 @@
-require 'open-uri'
-require 'mime-types'
 require 'sinatra'
 require 'sinatra/reloader' if development?
 require 'twilio-ruby'
