@@ -265,6 +265,7 @@ def determine_response body
 	where_vocabs = ["where", "location", "city"]
 	when_vocabs = ["when", "created", "born", "made"]
 	why_vocabs = ["why", "purpose", "for", "meaning"]
+	joke_vocabs = ["joke", "jokes", "bored", "fun"]
 	yes_vocabs = ["yes", "yeah", "yup", "sure", "sounds good", "ok", "I'd love to"]
 
 	if has_vocab_in_sentence body, hi_vocabs
@@ -279,13 +280,13 @@ def determine_response body
 		'I was created in Fall 2018! '
 	elsif has_vocab_in_sentence body, why_vocabs
 		'I was made by Melanie Zeng for her Programming for Online Prototypes Class! '
-	elsif body == 'joke'
+	elsif has_vocab_in_sentence body, joke_vocabs
 		file = File.open("jokes.txt", "r")
 		array_of_lines = IO.readlines("jokes.txt")
 		return array_of_lines.sample + "\n Reply 'Joke was good' if you like it or 'Joke was bad' if you don't. Don't be mean to me please!"
-	elsif body == 'Joke was good'
+	elsif body == 'It was good'
 		'Thank you for the complement. I am glad that you like it! 😊'
-	elsif body == 'Joke was bad'
+	elsif body == 'It was bad'
 		'Sorry, I am not good at jokes. But I will try harder. 😔'
 	elsif body == 'fact'
 		file = File.open("facts.txt", "r")
