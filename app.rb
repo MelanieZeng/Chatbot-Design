@@ -274,7 +274,7 @@ get '/incoming/sms' do
 			media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif"
 		end
     else
-    	if face_recogition_successful == true
+    	if face_recogition_successful == false
     		message = determine_response body
     	else
 			if age < 16
