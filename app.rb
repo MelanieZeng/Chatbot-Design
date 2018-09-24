@@ -284,9 +284,9 @@ def determine_response body
 		file = File.open("jokes.txt", "r")
 		array_of_lines = IO.readlines("jokes.txt")
 		return array_of_lines.sample + "\n Reply 'Joke was good' if you like it or 'Joke was bad' if you don't. Don't be mean to me please!"
-	elsif body.include? 'Joke was good'
+	elsif body == 'Joke was good'
 		'Thank you for the complement. I am glad that you like it! 😊'
-	elsif body.include? 'Joke was bad'
+	elsif body == 'Joke was bad'
 		'Sorry, I am not good at jokes. But I will try harder. 😔'
 	elsif body == 'fact'
 		file = File.open("facts.txt", "r")
