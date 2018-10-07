@@ -199,7 +199,7 @@ get '/incoming/sms' do
 				drink_dicionary = JSON.parse(response)
 				drink_array = drink_dicionary["drinks"]
 				drink = drink_array.sample
-				message = "You need a " + drink["strDrink"] + " to get more party energy! Btw, I love your " + " " + " hair."
+				message = "You need a " + drink["strDrink"] + " to get more party energy! Btw, I love your hairstyle."
 				media = drink["strDrinkThumb"]
 			elsif emotion == "sadness"
 				uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Beer")
@@ -271,6 +271,7 @@ def determine_response body
 	hi_vocabs = ["hi", "hello", "hey"]
 	what_vocabs = ["what do you do", "what can you do"]
 	fact_vocabs = ["fun fact", "fact", "what are some fun facts about you"]
+	lost_voacbs = ["i lost", "you won"]
 
 	if has_vocab_in_sentence body, hi_vocabs
 		'Hey, I am Moscow Muler 🍸! People call me their "virtual bartender" or "party host". If you want to know more about me, you can ask me questions like "what do you do", "what are some fun facts about you", or reply "Never have I ever" to play with me.'
@@ -286,7 +287,7 @@ def determine_response body
 		file = File.open("NHIE.txt", "r")
 		array_of_facts = IO.readlines("NHIE.txt")
 		return array_of_facts.sample
-	elsif body == 'i lost'
+	elsif has_vocab_in_sentence body, lost_voacbs
 		"Don't cheat - I am watching you! 😉 If you need help picking a drink, send me a selfie!"
 	elsif body == "truth or dare"
 		"Type 'truth' or 'dare' to get your questions."
