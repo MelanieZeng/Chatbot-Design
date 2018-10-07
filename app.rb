@@ -306,7 +306,7 @@ def determine_response body
 		"Here's how we're gonna play. Type 'draw a card' to get your kings cup rule. I've also prepared some popular new rules for ya! 😜"
 	elsif body == "draw a card"
 		file = File.open("kingscup.txt", "r")
-		array_of_facts = IO.readlines("kingdscup.txt")
+		array_of_facts = IO.readlines("kingscup.txt")
 		return array_of_facts.sample
 	else
 		'Oops! I didnt get that. If you want to know more about me, you can ask me questions like "what do you do", "what are some fun facts about you", or play "Never have I ever" with me.'
