@@ -127,13 +127,13 @@ get '/incoming/sms' do
 			#greeting based on different time of a day
 			if time.hour >= 5 and time.hour <= 12
 	    		message = greetings_mn.sample + " Great to hear your first message! I am Moscow Muler🍸. Hope we will have fun time together! "
-				media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif"
+				media = "https://media1.giphy.com/media/d3dIaJLb3TXRwxyg/giphy.gif?cid=3640f6095bba908b396e4c334591e0ec"
 			elsif time.hour > 12 and time.hour <= 18
 				message = greetings_an.sample + " Great to hear your first message! I am Moscow Muler🍸. Hope we will have fun time together! "
-				media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif"
+				media = "https://media1.giphy.com/media/d3dIaJLb3TXRwxyg/giphy.gif?cid=3640f6095bba908b396e4c334591e0ec"
 			else
 				message = greetings_en.sample + " Great to hear your first message! I am Moscow Muler🍸. Hope we will have fun time together! "
-				media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif"
+				media = "https://media1.giphy.com/media/d3dIaJLb3TXRwxyg/giphy.gif?cid=3640f6095bba908b396e4c334591e0ec"
 			end
     	else
     		message = determine_response body
