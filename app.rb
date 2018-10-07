@@ -106,6 +106,11 @@ get '/incoming/sms' do
 		data = JSON.parse(response.body)
 		face_attributes = data[0]["faceAttributes"]
 		age = face_attributes["age"].to_i
+		# hair_set = face_attributes["hair"]
+		# hair_color_set = hair_set["hairColor"] #It's an array and the elements are dictionary
+		# hair_color_confidence_max = hair_color_set.select {|k,v| v == values.max }
+		makeup = face_attributes["makeup"]
+		lipmakeup = makeup["lipMakeup"]
 		emotion_set = face_attributes["emotion"]
 		emotion_set_max_value_map = emotion_set.select {|k,v| v == emotion_set.values.max } #It's a dictionary
 		emotion_keys = emotion_set_max_value_map.keys #It's an array
@@ -121,13 +126,13 @@ get '/incoming/sms' do
 		if session["counter"] == 1
 			#greeting based on different time of a day
 			if time.hour >= 5 and time.hour <= 12
-	    		message = greetings_mn.sample + " Great to hear your first message! I am Moscow Muler🍸. Would you like to pick your morning drink? Send me a seflie that best describes your mood now! "
+	    		message = greetings_mn.sample + " Great to hear your first message! I am Moscow Muler🍸. Hope we will have fun time together! "
 				media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif"
 			elsif time.hour > 12 and time.hour <= 18
-				message = greetings_an.sample + " Great to hear your first message! I am Moscow Muler🍸. Would you like to pick your afternoon drink? Send me a seflie that best describes your mood now! "
+				message = greetings_an.sample + " Great to hear your first message! I am Moscow Muler🍸. Hope we will have fun time together! "
 				media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif"
 			else
-				message = greetings_en.sample + " Great to hear your first message! I am Moscow Muler🍸. Are you ready to partyyy? Show me your ready-party selfie and let me pick a drink for ya! "
+				message = greetings_en.sample + " Great to hear your first message! I am Moscow Muler🍸. Hope we will have fun time together! "
 				media = "https://media0.giphy.com/media/3o7TKMt1VVNkHV2PaE/giphy.gif"
 			end
     	else
@@ -182,7 +187,11 @@ get '/incoming/sms' do
 				drink_dicionary = JSON.parse(response)
 				drink_array = drink_dicionary["drinks"]
 				drink = drink_array.sample
-				message = "Let's partyyy! Get some " + drink["strDrink"] + "! "
+				if lipmakeup == true
+					message = "A "+ drink["strDrink"] + "would be a perfect match with the lipstick you have on!"
+				else
+					message = "I love your happy face! Let's partyyy!! Get some " + drink["strDrink"] + "! "
+				end
 				media = drink["strDrinkThumb"]
 			elsif emotion == "neutral"
 				uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Cocktail")
@@ -190,7 +199,7 @@ get '/incoming/sms' do
 				drink_dicionary = JSON.parse(response)
 				drink_array = drink_dicionary["drinks"]
 				drink = drink_array.sample
-				message = "Yo I got you some " + drink["strDrink"] + "! "
+				message = "You need a " + drink["strDrink"] + " to get more party energy! Btw, I love your " + " " + " hair."
 				media = drink["strDrinkThumb"]
 			elsif emotion == "sadness"
 				uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Beer")
@@ -233,7 +242,7 @@ get '/incoming/sms' do
 	twiml = Twilio::TwiML::MessagingResponse.new do |r|
 		r.message do |m|
 
-		# add the text of the response
+			# add the text of the response
 	    	m.body ( message )
 				
 			# add media if it is defined
@@ -260,40 +269,27 @@ end
 def determine_response body
 	body = body.downcase.strip
 	hi_vocabs = ["hi", "hello", "hey"]
-	what_vocabs = ["what", "help", "feature", "function", "guide"]
-	who_vocabs = ["who"]
-	where_vocabs = ["where", "location", "city"]
-	when_vocabs = ["when", "created", "born", "made"]
-	why_vocabs = ["why", "purpose", "for", "meaning"]
-	joke_vocabs = ["joke", "jokes", "bored", "fun"]
-	yes_vocabs = ["yes", "yeah", "yup", "sure", "sounds good", "ok", "I'd love to"]
+	what_vocabs = ["what do you do" "what do you do?"]
+	fact_vocabs = ["fun fact", "fact", "what are some fun facts about you"]
 
 	if has_vocab_in_sentence body, hi_vocabs
-		'Hey, I am Moscow Muler 🍸! I am your bartender tonight! Show me your ready-party look and I will pick the perfect drink for ya! '
-	elsif has_vocab_in_sentence body, who_vocabs
-		'I am a MeBot of Melanie Zeng. Reply "fact" to know more about Melanie! '
+		'Hey, I am Moscow Muler 🍸! People call me their "virtual bartender" or "party host". If you want to know more about me, you can ask me questions like "what do you do", "what are some fun facts about you", or play "Never have I ever" with me.'
 	elsif has_vocab_in_sentence body, what_vocabs
-		'I can pick the perfect cocktail based on your mood for you or a get-her/get-him drink for your girl/man tonight! 😉'
-	elsif has_vocab_in_sentence body, where_vocabs
-		'I live in Pittsburgh! '
-	elsif has_vocab_in_sentence body, when_vocabs
-		'I was created in Fall 2018! '
-	elsif has_vocab_in_sentence body, why_vocabs
-		'I was made by Melanie Zeng for her Programming for Online Prototypes Class! '
-	elsif has_vocab_in_sentence body, joke_vocabs
-		file = File.open("jokes.txt", "r")
-		array_of_lines = IO.readlines("jokes.txt")
-		return array_of_lines.sample + "\n Reply 'Joke was good' if you like it or 'Joke was bad' if you don't. Don't be mean to me please!"
-	elsif body == 'it was good'
-		'Thank you for the complement. I am glad that you like it! 😊'
-	elsif body == 'it was bad'
-		'Sorry, I am not good at jokes. But I will try harder. 😔'
-	elsif body == 'fact'
+		'Show me your ready-party look and I will pick you the perfect cocktail based on your mood. I can also recommend a get-her/get-him drink for your girl/man tonight if you send me their photos! 😉'
+	elsif has_vocab_in_sentence body, fact_vocabs
 		file = File.open("facts.txt", "r")
 		array_of_facts = IO.readlines("facts.txt")
 		return array_of_facts.sample
+	elsif body == 'never have i ever'
+		"Here's how we're gonna play. Type 'next' to get a never have I ever statement from me. If you have done the thing I said, reply 'I lost' and take a shot. If not, keep going."
+	elsif body == 'next'
+		file = File.open("NHIE.txt", "r")
+		array_of_facts = IO.readlines("NHIE.txt")
+		return array_of_facts.sample
+	elsif body == 'i lost'
+		"Don't cheat - I am watching you! 😉 If you need help picking a drink, send me a selfie!"
 	else
-		"Oops! I didn't get that. Say 'hi', 'who', 'what' or 'why' if you want to know more about me. "
+		'Oops! I didnt get that. If you want to know more about me, you can ask me questions like "what do you do", "what are some fun facts about you", or play "Never have I ever" with me.'
 	end
 end
 
