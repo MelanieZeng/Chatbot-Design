@@ -269,13 +269,13 @@ end
 def determine_response body
 	body = body.downcase.strip
 	hi_vocabs = ["hi", "hello", "hey"]
-	what_vocabs = ["what do you do" "what do you do?"]
+	what_vocabs = ["what do you do", "what can you do"]
 	fact_vocabs = ["fun fact", "fact", "what are some fun facts about you"]
 
 	if has_vocab_in_sentence body, hi_vocabs
-		'Hey, I am Moscow Muler 🍸! People call me their "virtual bartender" or "party host". If you want to know more about me, you can ask me questions like "what do you do", "what are some fun facts about you", or play "Never have I ever" with me.'
+		'Hey, I am Moscow Muler 🍸! People call me their "virtual bartender" or "party host". If you want to know more about me, you can ask me questions like "what do you do", "what are some fun facts about you", or reply "Never have I ever" to play with me.'
 	elsif has_vocab_in_sentence body, what_vocabs
-		'Show me your ready-party look and I will pick you the perfect cocktail based on your mood. I can also recommend a get-her/get-him drink for your girl/man tonight if you send me their photos! 😉'
+		'Show me your ready-party look and I will pick you the perfect cocktail based on your mood. I can also recommend a get-her/get-him drink for your girl/man tonight if you send me their photos! 😉 If you are looking for drinking games to play with your friends, reply "Truth or Dare" or "Kings Cup" to get questions now.'
 	elsif has_vocab_in_sentence body, fact_vocabs
 		file = File.open("facts.txt", "r")
 		array_of_facts = IO.readlines("facts.txt")
@@ -288,6 +288,22 @@ def determine_response body
 		return array_of_facts.sample
 	elsif body == 'i lost'
 		"Don't cheat - I am watching you! 😉 If you need help picking a drink, send me a selfie!"
+	elsif body == "truth or dare"
+		"Type 'truth' or 'dare' to get your questions."
+	elsif body == "truth"
+		file = File.open("truth.txt", "r")
+		array_of_facts = IO.readlines("truth.txt")
+		return array_of_facts.sample
+	elsif body == "dare"
+		file = File.open("dare.txt", "r")
+		array_of_facts = IO.readlines("dare.txt")
+		return array_of_facts.sample
+	elsif body == "kingscup"
+		"Here's how we're gonna play. Type 'draw a card' to get your kings cup rule. I've also prepared some popular new rules for ya! 😜"
+	elsif body == "draw a card"
+		file = File.open("kingscup.txt", "r")
+		array_of_facts = IO.readlines("kingdscup.txt")
+		return array_of_facts.sample
 	else
 		'Oops! I didnt get that. If you want to know more about me, you can ask me questions like "what do you do", "what are some fun facts about you", or play "Never have I ever" with me.'
 	end
