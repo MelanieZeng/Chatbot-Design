@@ -272,6 +272,9 @@ def determine_response body
 	what_vocabs = ["what do you do", "what can you do"]
 	fact_vocabs = ["fun fact", "fact", "what are some fun facts about you"]
 	lost_voacbs = ["i lost", "you won"]
+	nhiv_vocabs = ["never have i ever"]
+	truthordare_vocabs = ["truth or dare"]
+	kingscup_vocabs = ["kings cup", "king's cup"]
 
 	if has_vocab_in_sentence body, hi_vocabs
 		'Hey, I am Moscow Muler 🍸! People call me their "virtual bartender" or "party host". If you want to know more about me, you can ask me questions like "what do you do", "what are some fun facts about you", or reply "Never have I ever" to play with me.'
@@ -281,7 +284,7 @@ def determine_response body
 		file = File.open("facts.txt", "r")
 		array_of_facts = IO.readlines("facts.txt")
 		return array_of_facts.sample
-	elsif body == 'never have i ever'
+	elsif has_vocab_in_sentence body, nhiv_vocabs
 		"Here's how we're gonna play. Type 'next' to get a never have I ever statement from me. If you have done the thing I said, reply 'I lost' and take a shot. If not, keep going."
 	elsif body == 'next'
 		file = File.open("NHIE.txt", "r")
@@ -289,7 +292,7 @@ def determine_response body
 		return array_of_facts.sample
 	elsif has_vocab_in_sentence body, lost_voacbs
 		"Don't cheat - I am watching you! 😉 If you need help picking a drink, send me a selfie!"
-	elsif body == "truth or dare"
+	elsif has_vocab_in_sentence body, truthordare_vocabs
 		"Type 'truth' or 'dare' to get your questions."
 	elsif body == "truth"
 		file = File.open("truth.txt", "r")
@@ -299,7 +302,7 @@ def determine_response body
 		file = File.open("dare.txt", "r")
 		array_of_facts = IO.readlines("dare.txt")
 		return array_of_facts.sample
-	elsif body == "kingscup"
+	elsif has_vocab_in_sentence body, kingscup_vocabs
 		"Here's how we're gonna play. Type 'draw a card' to get your kings cup rule. I've also prepared some popular new rules for ya! 😜"
 	elsif body == "draw a card"
 		file = File.open("kingscup.txt", "r")
