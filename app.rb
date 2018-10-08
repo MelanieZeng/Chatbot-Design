@@ -188,7 +188,7 @@ get '/incoming/sms' do
 				drink_array = drink_dicionary["drinks"]
 				drink = drink_array.sample
 				if lipmakeup == true
-					message = "A "+ drink["strDrink"] + "would be a perfect match with the lipstick you have on!"
+					message = "A "+ drink["strDrink"] + " would be a perfect match with the lipstick you have on! BTW, If you are looking for drinking games to play with your friends, reply 'Truth or Dare' or 'Kings Cup' to get questions now."
 				else
 					message = "I love your happy face! Let's partyyy!! Get some " + drink["strDrink"] + "! "
 				end
