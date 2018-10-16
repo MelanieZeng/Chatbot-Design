@@ -106,9 +106,11 @@ get '/incoming/sms' do
 		data = JSON.parse(response.body)
 		face_attributes = data[0]["faceAttributes"]
 		age = face_attributes["age"].to_i
-		# hair_set = face_attributes["hair"]
-		# hair_color_set = hair_set["hairColor"] #It's an array and the elements are dictionary
-		# hair_color_confidence_max = hair_color_set.select {|k,v| v == values.max }
+		gender_set = face_attributes["gender"]
+		gender = gender_set.to_s
+		facialhair_set = face_attributes["facialHair"]
+		beard_str = facialhair_set["beard"].to_s
+		beard = beard_str.to_f
 		makeup = face_attributes["makeup"]
 		lipmakeup = makeup["lipMakeup"]
 		emotion_set = face_attributes["emotion"]
@@ -163,7 +165,7 @@ get '/incoming/sms' do
 				drink_dicionary = JSON.parse(response)
 				drink_array = drink_dicionary["drinks"]
 				drink = drink_array.sample
-				message = "Don't judge the " + drink["strDrink"] + ". "
+				message = "Hey don't judge the " + drink["strDrink"] + ". "
 				media = drink["strDrinkThumb"]
 			elsif emotion == "disgust"
 				uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Shot")
@@ -171,7 +173,7 @@ get '/incoming/sms' do
 				drink_dicionary = JSON.parse(response)
 				drink_array = drink_dicionary["drinks"]
 				drink = drink_array.sample
-				message = "Take this " + drink["strDrink"] + "shot and don't stop! "
+				message = "What's disgusting you? Why don't you take a " + drink["strDrink"] + "shot. "
 				media = drink["strDrinkThumb"]
 			elsif emotion == "fear"
 				uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Cocoa")
@@ -187,11 +189,15 @@ get '/incoming/sms' do
 				drink_dicionary = JSON.parse(response)
 				drink_array = drink_dicionary["drinks"]
 				drink = drink_array.sample
-				if lipmakeup == true
-					message = "A "+ drink["strDrink"] + " would be a perfect match with the lipstick you have on! BTW, If you are looking for drinking games to play with your friends, reply 'Truth or Dare' or 'Kings Cup' to get questions now."
+				if gender == "female"
+					if lipmakeup == true
+						message = "A "+ drink["strDrink"] + " would be a perfect match with the lipstick you have on! BTW, If you are looking for drinking games to play with your friends, reply 'Truth or Dare' or 'Kings Cup' to get questions now."
+					else
+						message = "I love your happy face! Let's partyyy!! Get some " + drink["strDrink"] + "! "
+					end
 				else
 					message = "I love your happy face! Let's partyyy!! Get some " + drink["strDrink"] + "! "
-				end
+					end
 				media = drink["strDrinkThumb"]
 			elsif emotion == "neutral"
 				uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Cocktail")
@@ -199,7 +205,15 @@ get '/incoming/sms' do
 				drink_dicionary = JSON.parse(response)
 				drink_array = drink_dicionary["drinks"]
 				drink = drink_array.sample
-				message = "You need a " + drink["strDrink"] + " to get more party energy! Btw, I love your hairstyle."
+				if gender == "male"
+					if beard > 0.2
+						message = "You need a " + drink["strDrink"] + " to get more party energy! Btw, beard's looking good today! 🧔"
+					else
+						message = "You need a " + drink["strDrink"] + " to get more party energy!"
+					end
+				else
+					message = "You need a " + drink["strDrink"] + " to get more party energy! Btw, I love your hairstyle"
+				end
 				media = drink["strDrinkThumb"]
 			elsif emotion == "sadness"
 				uri = URI("https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=Beer")
@@ -275,6 +289,7 @@ def determine_response body
 	nhiv_vocabs = ["never have i ever"]
 	truthordare_vocabs = ["truth or dare"]
 	kingscup_vocabs = ["kings cup", "king's cup"]
+	draw_vocabs = ["draw a card", "draw", "card"]
 
 	if has_vocab_in_sentence body, hi_vocabs
 		'Hey, I am Moscow Muler 🍸! People call me their "virtual bartender" or "party host". If you want to know more about me, you can ask me questions like "what do you do", "what are some fun facts about you", or reply "Never have I ever" to play with me.'
@@ -304,7 +319,7 @@ def determine_response body
 		return array_of_facts.sample
 	elsif has_vocab_in_sentence body, kingscup_vocabs
 		"Here's how we're gonna play. Type 'draw a card' to get your kings cup rule. I've also prepared some popular new rules for ya! 😜"
-	elsif body == "draw a card"
+	elsif has_vocab_in_sentence body, draw_vocabs
 		file = File.open("kingscup.txt", "r")
 		array_of_facts = IO.readlines("kingscup.txt")
 		return array_of_facts.sample
